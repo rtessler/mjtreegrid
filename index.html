@@ -1,0 +1,697 @@
+﻿<!doctype html>
+<html>
+
+<head>
+
+<title>mjTreeGrid</title>
+
+
+<meta name="keywords" content="jquery tree control, tree" /> 
+<meta name="description" content="mjTools treegrid." />
+
+<style>
+
+    .demo .widget { width: 500px; height: 250px; }
+
+    .searchbox { width: 500px; }
+
+    .searchbox .mj-searchbox input { border-radius: 0px; }
+
+    .source-panel { display: none; }
+
+    .api-panel { display: none; }
+
+</style>
+
+<script src="js/libs/jquery-1.11.3.min.js"></script>
+
+<link rel="stylesheet" type="text/css" href="css/style.css">
+
+<link rel="stylesheet" type="text/css" href="css/mjAll.css">
+<script src="js/mjCore.js"></script>
+<script src="js/mjTreeGrid.js"></script>
+<script src="js/mjSearchBox.js"></script>
+<script src="js/mjScrollBar.js"></script>
+
+<script>
+
+    $(document).ready(function () {
+
+        function message(msg) { $(".status").html(msg); }
+
+        function fillFunctionTable(json) {
+
+            $(".op").empty();
+
+            var i = 0;
+
+            while (i < json.length) {
+                var tr = $("<tr>");
+
+                for (var j = 0; j < 3 && i < json.length; j++) {
+                    var o = json[i++];
+
+                    var td = $("<td><a href='#' data-op='" + o.op + "' >" + o.text + "</a>");
+                    td.data(o.val);
+
+                    tr.append(td);
+                }
+
+                $(".op").append(tr);
+            }
+
+            rebind();
+        }
+
+        $(".examples li").click(function (e) {
+
+            e.preventDefault();
+
+            $(".examples li.active").removeClass("active");
+            $(e.currentTarget).addClass("active");
+        });
+
+        $(".menu td").click(function (e) {
+
+            e.preventDefault();
+
+            $(".menu td.active").removeClass("active");
+            $(e.currentTarget).addClass("active");
+        });
+
+
+        $(".menu a").click(function (e) {
+
+            e.preventDefault();
+
+            var op = $(e.currentTarget).attr("data-op");
+
+            $(".demo-panel").hide();
+            $(".source-panel").hide();
+            $(".api-panel").hide();
+
+            var api = [{ name: "getChildren(id)", description: "" },
+                        { name: "getRowData(id)", description: "" },
+                        { name: "clear()", description: "" },
+                        { name: "search(search_function)", description: "" },
+                        { name: "enableAll()", description: "" },
+                        { name: "disableAll()", description: "" },
+                        { name: "enableItem(id)", description: "" },
+                        { name: "disableItem(id)", description: "" },
+                        { name: "toggle(id)", description: "" },
+                        { name: "checkAll()", description: "" },
+                        { name: "uncheckAll()", description: "" },
+                        { name: "check(id, check_parents)", description: "" },
+                        { name: "uncheck(id)", description: "" },
+                        { name: "checkAt(n)", description: "" },
+                        { name: "uncheckAt(n)", description: "" },
+                        { name: "getChecked()", description: "" },
+                        { name: "halfTick(id)", description: "" },
+                        { name: "halfTickAt(n)", description: "" },
+                        { name: "halfTickAll()", description: "" },
+                        { name: "deselectHalfTicked()", description: "" },
+                        { name: "selectParent(id)", description: "" },
+                        { name: "select(id)", description: "" },
+                        { name: "deselect(id)", description: "" },
+                        { name: "getSelected()", description: "" },
+                        { name: "selectAll()", description: "" },
+                        { name: "deselectAll()", description: "" },
+                        { name: "selectAt(n)", description: "" },
+                        { name: "deselectAt(n)", description: "" },
+                        { name: "sort(callback)", description: "" },
+                        { name: "getSiblings(id)", description: "" },
+                        { name: "insertRow(id, data)", description: "" },
+                        { name: "addRow(id, data)", description: "" },
+                        { name: "addRootNode(data)", description: "" },
+                        { name: "addChild(id, data)", description: "" },
+                        { name: "updateRow(id, data)", description: "" },
+                        { name: "removeRow(id)", description: "" },
+                        { name: "expand(id)", description: "" },
+                        { name: "collapse(id)", description: "" },
+                        { name: "expandAll()", description: "" },
+                        { name: "collapseAll()", description: "" },
+                        { name: "close()", description: "" },
+                        { name: "scrollTo(n, animate)", description: "" }];
+
+            switch (op) {
+                case "demo":
+
+                    $(".demo-panel").show();
+                    break;
+
+                case "source":
+
+                    $(".source-panel").show();
+                    break;
+
+                case "api":
+
+                    $(".api-panel").show();
+
+                    var str = "";
+
+                    $.each(api, function (index, o) {
+
+                        str += "<tr><td>" + o.name + "</td></tr>";
+                    });
+
+                    $(".api-table").html(str);
+
+                    break;
+            }
+        });
+
+        function rebind() {
+
+            $(".op a").click(function (e) {
+
+                e.preventDefault();
+
+                var op = $(e.currentTarget).attr("data-op");
+
+                var val = $(e.currentTarget).parent().data();
+
+                message("");
+
+                //console.log("op = " + op + " val = ");
+                //console.log(val);
+
+                var selected = $(".widget").mjTreeGrid("getSelected");
+
+                console.log(selected);
+
+                switch (op) {
+
+                    case "test":
+                        var t = $('.widget').data('mj-treegrid-data');
+                        t.select("gibson");
+                        break;
+
+                    case "select":
+                    case "deselect":
+
+                        val = "fender";
+                        $(".widget").mjTreeGrid(op, val);
+                        break;
+
+                    case "getRowData":
+
+                        var o = $(".widget").mjTreeGrid(op, "dogs");
+
+                        if (o)
+                            message("item:" + o.text);
+                        else
+                            message("item not found");
+
+                        break;
+
+                    case "enable":
+                    case "disable":
+
+                        if (selected.length > 0)
+                            $(".widget").mjTreeGrid(op, selected[0]);
+                        else
+                            message("nothing selected");
+
+                        break;
+
+                    case "insertRow":
+                    case "addRow":
+                    case "addChild":
+                    case "updateRow":
+
+                        // 2 parameters
+
+                        if (selected.length > 0)
+                            $(".widget").mjTreeGrid(op, selected[0], val);
+                        else
+                            message("nothing selected");
+
+                        break;
+
+                    case "getChecked":
+                    case "getSelected":
+                    case "expand":
+                    case "collapse":
+                    case "removeRow":
+                    case "getChildren":
+                    case "getSiblings":
+
+                        // 1 parameter
+
+                        if (selected.length > 0) {
+
+                            var arr = $(".widget").mjTreeGrid(op, selected[0]);
+
+                            if (arr) {
+
+                                var res = [];
+
+                                for (var i = 0; i < arr.length; i++)
+                                    res.push(arr[i].data.text);
+
+                                message(res.join());
+                            }
+                        }
+                        else
+                            message("nothing selected");
+
+                        break;
+
+                    case "sort":
+
+                        $(".widget").mjTreeGrid(op, null);
+                        break;
+
+                    default:
+
+                        var res = $(".widget").mjTreeGrid(op, val);
+
+                        console.log(res);                       
+
+                        if (res) {
+
+                            if (res instanceof Array) {
+
+                                var arr = [];
+
+                                for (var i = 0; i < res.length; i++)
+                                    arr.push(res[i].text);
+
+                                message(arr.join());
+                            }
+                            else
+                                message(res);
+                        }
+
+                        break;
+                }
+            });
+
+        }
+
+
+        function createSearchBox()
+        {
+            $(".searchbox").mjSearchBox();
+
+            $(".searchbox").on("mjKeyup", function (e, val) {
+                message("keyup: " + val);
+
+                $(".widget").mjTreeGrid("filter", val, function (o, val) { return o.text.toLowerCase().indexOf(val) >= 0; });
+            });
+
+            //$(".searchbox").on("search", function (e, data) {
+            //    message("search: " + data);
+
+            //    $(".widget").mjTreeView("filter", data);
+            //});
+        }
+
+        function createData(n)
+        {
+            var width = 100;
+            var height = 1;
+
+            var i = 0;
+
+            var data = [];
+
+            if (!n)
+            {
+
+                data = [
+
+                     { id: "gibson", pid: null, text: "Gibson", image: "images/test.png", description: "big", width: width++, height: height++, expanded: true },
+                         {  id: "sg", pid: "gibson", text: "SG", description: "big", width: width++, height: height++ },
+                         {  id: "les paul", pid: "gibson", text: "Les Paul", description: "big", width: width++, height: height++ },
+                         {  id: "335", pid: "gibson", text: "335", description: "big", width: width++, height: height++ },
+                         {  id: "flying v", pid: "gibson", text: "Flying V", description: "big", width: width++, height: height++ },
+                         {  id: "robot", pid: "gibson", text: "Robot", description: "big", width: width++, height: height++ },
+
+                    { id: "fender", pid: null, text: "Fender", image: "images/test.png", description: "big", width: width++, height: height++ },
+
+                             { id: "electric", pid: "fender", text: "Electric", description: "big", width: width++, height: height++ },
+
+                                 { id: "stratocaster", pid: "electric", text: "Stratocaster", description: "big", width: width++, height: height++ },
+                                     { id: "colors", pid: "stratocaster", text: "Colors", description: "big", width: width++, height: height++ },
+                                         {  pid: "colors", text: "Sunburst", description: "big", width: width++, height: height++ },
+                                         {  pid: "colors", text: "White", description: "big", width: width++, height: height++ },
+                                     { id: "pickups", pid: "stratocaster", text: "Pickups", description: "big", width: width++, height: height++ },
+                                         {  pid: "pickups", text: "standard single coil", description: "big", width: width++, height: height++ },
+                                         {  pid: "pickups", text: "EMG", description: "big", width: width++, height: height++ },
+
+                                 {  pid: "electric", text: "Telecaster", description: "big", width: width++, height: height++ },
+
+                                 { id: "jaguar", pid: "electric", text: "Jaguar", description: "big", width: width++, height: height++ },
+                                     { id: "jcolors", pid: "jaguar", text: "Colors", description: "big", width: width++, height: height++ },
+                                     {  pid: "jcolors", text: "Sunburst", description: "big", width: width++, height: height++ },
+                                     {  pid: "jcolors", text: "Turquoise", description: "big", width: width++, height: height++ },
+                                     {  pid: "jcolors", text: "Black", description: "big", width: width++, height: height++ },
+
+                ];
+            }
+            else
+            {
+                var k = n+1;
+
+                for (var i = 0; i < n; i++)
+                {
+                    var childno = Math.floor(Math.random()*10);
+
+                    var d = { id: i, pid: null, text: "name " + i, image: null, description: "name " + k, width: width++, height: height++ };
+ 
+                    data.push(d);
+
+                    var pid = i;
+
+                    for (var j = 0; j < childno; j++)
+                    {
+                        var d = { id: k, pid: pid, text: "name " + k, image: null, description: "name " + k, width: width++, height: height++ };
+                        k++;
+                        data.push(d);
+                    }
+                }
+            }
+
+            return data;
+        }
+
+        var standard_ops = [{ op: 'getSelected', text: 'get selected' },
+                { op: 'selectAll', text: 'select all' },
+                { op: 'deselectAll', text: 'deselect all' },
+                { op: 'select', text: 'select', val: "fender" },
+                { op: 'deselect', text: 'deselect', val: "fender" },
+
+                { op: 'insertRow', text: 'add before', val: { text: "James Blake", description: "big", width: 1, height: 1, image: "images/test.png" } },
+                { op: 'addRow', text: 'add after', val: { text: "Uriah Heap", description: "big", width: 2, height: 2, image: "images/test.png" } },
+                { op: 'addChild', text: 'add child', val: { text: "Deep Purple", description: "big", width: 3, height: 3, image: "images/test.png" } },
+                { op: 'updateRow', text: 'update', val: { text: "Led Zeppelin", description: "big", width: 4, height: 4, image: "images/test.png" } },
+
+                { op: 'removeRow', text: 'remove' },
+
+                { op: 'clear', text: 'clear' },
+                { op: 'addRootNode', text: 'add new root node', val: { text: "James Blake", image: "images/test.png" } },
+
+                { op: 'disable', text: 'disable' },
+                { op: 'enable', text: 'enable' },
+                { op: 'disableAll', text: 'disableAll' },
+                { op: 'enableAll', text: 'enableAll' },
+
+                { op: 'expand', text: 'expand' },
+                { op: 'collapse', text: 'collapse' },
+                { op: 'expandAll', text: 'expand all' },
+                { op: 'collapseAll', text: 'collapse all' },
+                { op: 'getExpanded', text: 'getExpanded' },
+
+                { op: 'getChildren', text: 'get children' },
+                { op: 'getSiblings', text: 'get siblings' },
+                { op: 'close', text: 'close' },
+                { op: 'clear', text: 'clear' },
+                { op: 'sort', text: 'sort' },
+                { op: "test", text: "test" }];
+
+        var checklist_ops = [{ op: 'getRowData', text: 'get item dogs' },
+        { op: 'getChecked', text: 'get checked' },
+        { op: 'checkAll', text: 'check all' },
+        { op: 'uncheckAll', text: 'uncheck all' },
+        { op: 'check', text: 'check' },
+        { op: 'uncheck', text: 'uncheck' },
+        { op: 'halfTickAll', text: 'halfTickAll' },
+        { op: 'halfTick', text: 'halfTick' },
+        { op: 'disable', text: 'disable' },
+        { op: 'enable', text: 'enable' },
+        { op: 'disableAll', text: 'disableAll' },
+        { op: 'enableAll', text: 'enableAll' }];
+
+        $(".basic").click(function (e) {
+
+            fillFunctionTable(standard_ops);
+
+            var rows = createData();
+
+            $(".widget").mjTreeGrid({
+                rows: rows,
+                columns: [{ data_field: "text", width: 100 }],
+                show_borders: false
+            });
+
+            $(".widget").on("selected", function (e, d) {
+
+                console.log(d);
+            });
+        });
+
+        $(".columns").click(function (e) {           
+
+            fillFunctionTable(standard_ops);
+
+            var rows = createData();
+
+            $(".widget").mjTreeGrid({
+                rows: rows,
+                columns: [{ data_field: "text", width: 100 },
+                            { data_field: "description", width: 200 },
+                            { data_field: "width", width: 100 },
+                            { data_field: "height", width: 100 }]
+            });
+
+            $(".widget").on("selected", function (e, d) {
+
+                //console.log(e);
+                console.log(d);
+            });
+        });
+
+        $(".checkboxes").click(function (e) {
+
+            fillFunctionTable(checklist_ops);
+
+            var rows = createData();
+
+            $(".widget").mjTreeGrid({
+                rows: rows,
+                show_checkboxes: true,
+                columns: [{ data_field: "text", width: 150 },
+                            { data_field: "description", width: 100 },
+                            { data_field: "width", width: 100 },
+                            { data_field: "height", width: 100 }]
+            });
+
+            $(".widget").on("checkChange", function (e, d) {
+
+                if (d.data.checked == 1)
+                    message(d.data.text + " checked");
+                else
+                    message(d.data.text + " unchecked");
+            });
+        });
+
+        $(".missing-data").click(function (e) {
+
+            fillFunctionTable(standard_ops);
+
+            var rows = createData("missing-data");
+
+            $(".widget").mjTreeGrid({
+                rows: rows,
+                columns: [{ data_field: "text", width: 100 },
+                            { data_field: "description", width: 200 },
+                            { data_field: "width", width: 100 },
+                            { data_field: "height", width: 100 }]
+            });
+
+            $(".widget").on("selected", function (e, d) {
+
+                //console.log(e);
+                console.log(d);
+            });
+        });
+
+
+        $(".custom").click(function (e) {
+          
+            fillFunctionTable(standard_ops);
+
+            var rows = createData();
+
+            function myRender(r, c, i)
+            {
+                if (i == 0)
+                    return r.data.text + " custom";
+
+                var str;
+
+                switch (i)
+                {
+                    case 1:
+                        str = "<a href='#' class='btn btn-add' data-id='" + r.id + "'>add</a>";
+                        break;
+
+                    case 2:
+                        str = "<a href='#' class='btn btn-delete' data-id='" + r.id + "'>delete</a>";
+                        break;
+
+                    case 3:
+                        str = "<a href='#' class='btn btn-update' data-id='" + r.id + "'>update</a>";
+                        break;
+
+                    default:
+                        str = r.data.text;
+                        break;
+                }
+
+                return str;                
+            }
+
+
+            $(".widget").mjTreeGrid({
+                rows: rows,
+                cellRender: myRender,
+                columns: [{ data_field: "text", width: 150 },
+                            { data_field: "add", width: 100, align: "center" },
+                            { data_field: "delete", width: 100, align: "center" },
+                            { data_field: "update", width: 100, align: "center" }]
+            });
+
+            $(".btn").on("click", function (e) {
+
+                e.preventDefault();
+
+                var id = $(e.currentTarget).attr("data-id");
+
+                if ($(e.currentTarget).hasClass("btn-add"))
+                    message("click id = " + id + " add");
+
+                if ($(e.currentTarget).hasClass("btn-delete"))
+                    message("click id = " + id + " delete");
+
+                if ($(e.currentTarget).hasClass("btn-update"))
+                    message("click id = " + id + " update");
+            });
+
+            $(".widget").on("checkChange", function (e, d) {
+
+                //console.log(e);
+                //console.log(d);
+            });
+        });
+
+        $(".dragdrop").click(function (e) {
+
+            fillFunctionTable(standard_ops);
+
+            var rows = createData();
+
+            $(".widget").mjTreeGrid({
+                rows: rows,
+                dragdrop: true,
+                columns: [{ data_field: "text", width: 150 },
+                            { data_field: "description", width: 100 },
+                            { data_field: "width", width: 100 },
+                            { data_field: "height", width: 100 }],
+                beforeDrop: function(drag_target, drop_target, drop_placement)
+                {
+                    //console.log("before drop");
+                    return true;
+                },
+                afterDrop: function(drag_target, drop_target, drop_placement)
+                {
+                    //console.log("after drop");
+                }
+            });
+
+        });
+
+
+        $(".virtual").click(function (e) {
+
+            fillFunctionTable(standard_ops);
+
+            var rows = createData(5000);
+
+            $(".widget").mjTreeGrid({
+                rows: rows,
+                virtual_mode: true,
+                dragdrop: true,
+                columns: [{ data_field: "text", width: 150 },
+                            { data_field: "description", width: 100 },
+                            { data_field: "width", width: 100 },
+                            { data_field: "height", width: 100 }]
+            });
+
+        });        
+
+        $(".basic").click();
+
+        createSearchBox();
+    });
+
+</script>
+
+</head>
+
+<body>
+
+<div class="demo wrapper">
+
+    <div class="left-panel">
+
+        <br />
+
+	    <ul class=" vertical-menu examples">
+            <li><strong>examples</strong></li>
+		    <li class="active"><a href="#" class="basic">basic</a></li>
+            <li><a href="#" class="columns">columns</a></li>
+            <li><a href="#" class="checkboxes">checkboxes</a></li>
+            <li><a href="#" class="custom">custom render</a></li>
+            <li><a href="#" class="dragdrop">dragdrop</a></li>
+            <li><a href="#" class="virtual">virtual</a></li>
+	    </ul>
+
+    </div>
+
+    <div class="right-panel">
+
+        <table class="menu">
+            <tr>
+                <td class="active"><a href="#" data-op="demo">Demo</a></td>
+                <td><a href="#" data-op="source">Source</a></td>
+                <td><a href="#" data-op="api">API</a></td>
+            </tr>
+        </table>
+
+        <div class="content">
+
+            <div class="demo-panel">
+       
+                <div class="widget"></div> 
+
+                <div class="searchbox"></div>                
+
+                <br />
+
+                <div class="status"></div>
+
+                <p>functions</p>
+
+                <table class="op"></table>
+
+            </div>
+
+            <div class="source-panel"></div>
+
+            <div class="api-panel">
+
+                <table class="api-table"></table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

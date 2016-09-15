@@ -1,0 +1,33 @@
+﻿.mj-searchbox {
+    width: 100%;
+    height: 26px;
+    background: #efefef;
+}
+
+.mj-searchbox .mj-searchbox-container {
+    position: absolute;
+    left: 0px;
+    right: 12px;
+}
+
+.mj-searchbox input {
+    padding: 5px;
+    border-width: 0px;
+    outline: none;
+    width: 100%;
+    box-sizing: content-box;
+    background: transparent;
+
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.mj-searchbox .mj-search-btn {
+    background-image: url('../images/search.png');
+    background-size: 25px 25px;
+    background-repeat: no-repeat;
+    width: 25px;
+    height: 25px;
+    position: absolute;
+    right: 0px;
+}

@@ -1,0 +1,117 @@
+﻿.mj-widget {
+    font-family: Verdana,Arial,sans-serif;
+    font-style: normal;
+    font-size: 12px;
+    display: inline-block;
+    position: relative;
+}
+
+.mj-left { float: left; }
+.mj-right { float: right; }
+
+.mj-table { display: table; border-collapse: collapse; width: 100%; }
+.mj-row { display: table-row; }
+.mj-cell {
+    display: table-cell;
+    /*vertical-align: middle;
+    border-collapse: initial;*/
+}
+
+.mj-disabled { cursor: default; color: #abc; /*opacity: .35; filter: Alpha(Opacity=45);*/ }
+.mj-hidden { display: none; }
+
+.mj-nowrap {
+    white-space: nowrap;
+    border-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mj-wrap { white-space: normal; }
+
+/*------------------------------------------------------------------------------------*/
+/* checkboxes mjCheckBox, mjGrid, mjListBox, mjTreeGrid, mjTreeView */
+
+.mj-checkbox-box {
+	width: 15px;
+	height: 15px;
+    margin-right: 2px;
+    border: 1px solid #b0b0b0;
+	border-radius: 3px;	
+	
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+    box-sizing: content-box; /* if container has box-sizing: border-box sixe is wrong */
+}
+
+.mj-checkbox-box .mj-tick {
+    background-repeat: no-repeat; 
+    background-position: center;
+	outline: none;
+    width: 15px;
+    height: 15px;
+    outline: none;
+    position: relative;
+}
+
+
+.mj-checkbox-box.checked .mj-tick {
+	background-image: url("../images/tick-15x15.png"); 
+	
+}
+
+.mj-checkbox-box.half-ticked .mj-tick { 
+    background-image: url('../images/half-tick-13x13.png'); 
+}
+
+/*------------------------------------------------------------------------------------*/
+/* radio buttons */
+
+.mj-radio { 
+    width: 14px; 
+    height: 14px; 
+    border-radius: 14px; 
+    border: 1px solid #999;  
+    margin-right: 2px; 
+    box-sizing: content-box;
+}
+
+.mj-radio .mj-dot { 
+    position: relative; 
+    top: 3px;
+    left: 3px; 
+    width: 8px; 
+    height: 8px; 
+    border-radius: 8px;  
+}
+
+.mj-radio.checked .mj-dot { background: #666; }
+
+/*------------------------------------------------------------------------------------*/
+/* arrows */
+
+.mj-arrow {
+    background-repeat: no-repeat;
+    background-position: center;
+    outline: none;
+    width: 14px;
+    height: 100%;
+}
+
+.mj-arrow-left { background-image: url('../images/chrome-arrow-left.png'); }
+.mj-arrow-right { background-image: url('../images/chrome-arrow-right.png'); }
+.mj-arrow-up { background-image: url('../images/chrome-arrow-up.png'); }
+.mj-arrow-down { background-image: url('../images/chrome-arrow-down.png'); }
+
+.mj-noselect {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
